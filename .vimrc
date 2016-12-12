@@ -13,6 +13,7 @@ noremap j gj
 noremap k gk
 
 noremap 0 $
+noremap 9 0
 
 nnoremap <S-Down> vj
 nnoremap <S-Up> vk
@@ -42,8 +43,6 @@ autocmd FileType c set expandtab | set tabstop=2 | set shiftwidth=2
 set smartindent
 set colorcolumn=80
 
-" set pythonthreedll=/usr/local/Cellar/python3/3.5.2_1/Frameworks/Python.framework/Versions/3.5/bin/python3.5 
-" set pythondll=/usr/local/Cellar/python3/3.5.2_1/Frameworks/Python.framework/Versions/3.5/bin/python3.5
 " neobundle settings 
 if has('vim_starting')
   set nocompatible
