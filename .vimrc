@@ -1,9 +1,9 @@
-colorscheme desert
+colorscheme molokai
 set undodir=$HOME/.vim/undo
 set nobackup
 set number
 
-" 高速移動 上下移動は滑らかに
+" #### Key Bind ####
 noremap <C-h> b
 noremap <C-l> e
 noremap <C-j> 2j2j2j2j2j
@@ -35,13 +35,26 @@ vnoremap <S-k> k
 vnoremap <S-l> l
 vnoremap <S-h> h
 
+noremap <C-Tab> gt
+noremap <C-S-Tab> gT
+
 map <D-F> <Space>zfa{
 
-autocmd FileType cpp set expandtab | set tabstop=2 | set shiftwidth=2
-autocmd FileType c set expandtab | set tabstop=2 | set shiftwidth=2
 
+" #### Tab Setting ####
 set smartindent
+autocmd FileType c set expandtab | set ts=2 | set sw=2 | set cindent
+autocmd FileType cpp set expandtab | set ts=2 | set sw=2 | set cindent
+autocmd FileType tex set expandtab | set tabstop=2 | set shiftwidth=2
+
+
 set colorcolumn=80
+
+
+" #### call python3 for jedi ####
+py3 import sys
+py3 print(sys.path)
+
 
 " neobundle settings 
 if has('vim_starting')
@@ -62,14 +75,56 @@ let g:neobundle_default_git_protocol='https'
 NeoBundleFetch 'Shougo/neobundle.vim'
 
 NeoBundle 'Shougo/neocomplete.vim'
-" ↓こんな感じが基本の書き方
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'scrooloose/syntastic.git'
 NeoBundle 't9md/vim-quickhl'
+NeoBundle 'vim-latex/vim-latex'
+NeoBundle 'tyru/caw.vim.git'
+
+" #### Vim-LaTeX ####
+
+filetype plugin on
+filetype indent on
+set shellslash
+set grepprg=grep\ -nH\ $*
+let g:tex_flavor='latex'
+let g:Imap_UsePlaceHolders = 1
+let g:Imap_DeleteEmptyPlaceHolders = 1
+let g:Imap_StickyPlaceHolders = 0
+let g:Tex_DefaultTargetFormat = 'pdf'
+let g:Tex_MultipleCompileFormats='dvi,pdf'
+"let g:Tex_FormatDependency_pdf = 'pdf'
+let g:Tex_FormatDependency_pdf = 'dvi,pdf'
+"let g:Tex_FormatDependency_pdf = 'dvi,ps,pdf'
+let g:Tex_FormatDependency_ps = 'dvi,ps'
+let g:Tex_CompileRule_pdf = '/Library/TeX/texbin/ptex2pdf -u -l -ot "-synctex=1 -interaction=nonstopmode -file-line-error-style" $*'
+"let g:Tex_CompileRule_pdf = '/Library/TeX/texbin/pdflatex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
+"let g:Tex_CompileRule_pdf = '/Library/TeX/texbin/lualatex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
+"let g:Tex_CompileRule_pdf = '/Library/TeX/texbin/luajitlatex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
+"let g:Tex_CompileRule_pdf = '/Library/TeX/texbin/xelatex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
+"let g:Tex_CompileRule_pdf = '/usr/local/bin/ps2pdf $*.ps'
+let g:Tex_CompileRule_ps = '/Library/TeX/texbin/dvips -Ppdf -o $*.ps $*.dvi'
+let g:Tex_CompileRule_dvi = '/Library/TeX/texbin/uplatex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
+let g:Tex_BibtexFlavor = '/Library/TeX/texbin/upbibtex'
+let g:Tex_MakeIndexFlavor = '/Library/TeX/texbin/upmendex $*.idx'
+let g:Tex_UseEditorSettingInDVIViewer = 1
+let g:Tex_ViewRule_pdf = 'Skim'
+"let g:Tex_ViewRule_pdf = '/usr/bin/open -a Skim.app'
+"let g:Tex_ViewRule_pdf = '/usr/bin/open -a Preview.app'
+"let g:Tex_ViewRule_pdf = '/usr/bin/open -a TeXShop.app'
+"let g:Tex_ViewRule_pdf = '/Applications/TeXworks.app/Contents/MacOS/TeXworks'
+"let g:Tex_ViewRule_pdf = '/Applications/texstudio.app/Contents/MacOS/texstudio --pdf-viewer-only'
+"let g:Tex_ViewRule_pdf = '/usr/bin/open -a Firefox.app'
+"let g:Tex_ViewRule_pdf = '/usr/bin/open -a "Adobe Reader.app"'
+"let g:Tex_ViewRule_pdf = '/usr/bin/open'
+
+set imdisable
+autocmd FileType tex nmap <D-y> \ll
+
+" #### Plugin : jedi-vim ####
 
 "sudo pip install jedi pep8 pyflakes
-" NeoBundleLazy 'davidhalter/jedi-vim', {
-" 			\ 'autoload':{ 'filetypes':[ 'python' ]} } 
+NeoBundleLazy 'davidhalter/jedi-vim', {'autoload':{ 'filetypes':[ 'python' ]} } 
 " NeoBundle 'davidhalter/jedi-vim'
 
 " Do not load vim-pyenv until *.py is opened and
@@ -79,8 +134,18 @@ NeoBundle 't9md/vim-quickhl'
 "         \ 'autoload': {
 "         \   'filetypes': ['python', 'python3'],
 "         \ }}
-NeoBundle 'tyru/caw.vim.git'
-" caw.vim
+autocmd FileType python setlocal omnifunc=jedi#completions
+
+let g:jedi#auto_vim_configuration = 0
+
+if !exists('g:neocomplete#force_omni_input_patterns')
+        let g:neocomplete#force_omni_input_patterns = {}
+endif
+
+let g:neocomplete#force_omni_input_patterns.python = '\h\w*\|[^. \t]\.\w*'
+
+" #### Plugin : caw.vim ####
+
 nmap <D-/> <Plug>(caw:hatpos:toggle)
 vmap <D-/> <Plug>(caw:hatpos:toggle)
 
@@ -88,6 +153,8 @@ nmap <D-j> <Plug>(quickhl-manual-this)
 xmap <D-j> <Plug>(quickhl-manual-this)
 nmap <D-J> <Plug>(quickhl-manual-reset)
 xmap <D-J> <Plug>(quickhl-manual-reset)
+
+" #### Plugin : vim-indent-guides ####
 
 NeoBundle 'nathanaelkane/vim-indent-guides'
 let g:indent_guides_enable_on_vim_startup=1
@@ -180,16 +247,23 @@ if has('vim_starting') &&  file_name == ""
     autocmd VimEnter * execute 'NERDTree ./'
 endif
 
+"#### Plugin : Syntastic ####
 let g:syntastic_mode_map = { 'mode': 'passive',     
                           \ 'active_filetypes': [],     
                           \ 'passive_filetypes': [] } 
 let g:syntastic_auto_loc_list=1     
+let g:syntastic_error_symbol = ">>"
+let g:syntastic_warning_symbol = ">"
 
-let g:loaded_syntastic_python_pep8_checker = 0
+let g:syntastic_cpp_include_dirs = ['/usr/local/include', "./"]
+let g:syntastic_cpp_compiler = 'clang++'
+let g:syntastic_cpp_config_file = '.syntastic_cpp_config'
+let g:syntastic_cpp_check_header = 1
+
+let g:syntastic_python_checkers = ['pyflakes', 'pep8']
+" let g:loaded_syntastic_python_pep8_checker = 1
 
 "保存時にSyntasticをかける.
 autocmd BufWritePost * SyntasticCheck
-
-let g:syntastic_python_checkers = ['pycodestyle']
 
 set whichwrap=b,s,h,l,<,>,[,]
