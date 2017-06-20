@@ -13,3 +13,6 @@ gvim() {
 }
 
 alias ls='ls -G'
+# alias gvim='open -a MacVim'
+
+export PS1="\033[96m\t \u:\w\033[0m \n$ "

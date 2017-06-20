@@ -43,10 +43,11 @@ map <D-F> <Space>zfa{
 
 " #### Tab Setting ####
 set smartindent
-autocmd FileType c set expandtab | set ts=2 | set sw=2 | set cindent
-autocmd FileType cpp set expandtab | set ts=2 | set sw=2 | set cindent
-autocmd FileType tex set expandtab | set tabstop=2 | set shiftwidth=2
+set tabstop=4
 
+autocmd FileType c set expandtab | set tabstop=2 | set sw=2 | set cindent
+autocmd FileType cpp set expandtab | set tabstop=2 | set sw=2 | set cindent
+autocmd FileType tex set expandtab | set tabstop=2 | set shiftwidth=2
 
 set colorcolumn=80
 
@@ -78,48 +79,8 @@ NeoBundle 'Shougo/neocomplete.vim'
 NeoBundle 'scrooloose/nerdtree'
 NeoBundle 'scrooloose/syntastic.git'
 NeoBundle 't9md/vim-quickhl'
-NeoBundle 'vim-latex/vim-latex'
 NeoBundle 'tyru/caw.vim.git'
 
-" #### Vim-LaTeX ####
-
-filetype plugin on
-filetype indent on
-set shellslash
-set grepprg=grep\ -nH\ $*
-let g:tex_flavor='latex'
-let g:Imap_UsePlaceHolders = 1
-let g:Imap_DeleteEmptyPlaceHolders = 1
-let g:Imap_StickyPlaceHolders = 0
-let g:Tex_DefaultTargetFormat = 'pdf'
-let g:Tex_MultipleCompileFormats='dvi,pdf'
-"let g:Tex_FormatDependency_pdf = 'pdf'
-let g:Tex_FormatDependency_pdf = 'dvi,pdf'
-"let g:Tex_FormatDependency_pdf = 'dvi,ps,pdf'
-let g:Tex_FormatDependency_ps = 'dvi,ps'
-let g:Tex_CompileRule_pdf = '/Library/TeX/texbin/ptex2pdf -u -l -ot "-synctex=1 -interaction=nonstopmode -file-line-error-style" $*'
-"let g:Tex_CompileRule_pdf = '/Library/TeX/texbin/pdflatex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
-"let g:Tex_CompileRule_pdf = '/Library/TeX/texbin/lualatex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
-"let g:Tex_CompileRule_pdf = '/Library/TeX/texbin/luajitlatex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
-"let g:Tex_CompileRule_pdf = '/Library/TeX/texbin/xelatex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
-"let g:Tex_CompileRule_pdf = '/usr/local/bin/ps2pdf $*.ps'
-let g:Tex_CompileRule_ps = '/Library/TeX/texbin/dvips -Ppdf -o $*.ps $*.dvi'
-let g:Tex_CompileRule_dvi = '/Library/TeX/texbin/uplatex -synctex=1 -interaction=nonstopmode -file-line-error-style $*'
-let g:Tex_BibtexFlavor = '/Library/TeX/texbin/upbibtex'
-let g:Tex_MakeIndexFlavor = '/Library/TeX/texbin/upmendex $*.idx'
-let g:Tex_UseEditorSettingInDVIViewer = 1
-let g:Tex_ViewRule_pdf = 'Skim'
-"let g:Tex_ViewRule_pdf = '/usr/bin/open -a Skim.app'
-"let g:Tex_ViewRule_pdf = '/usr/bin/open -a Preview.app'
-"let g:Tex_ViewRule_pdf = '/usr/bin/open -a TeXShop.app'
-"let g:Tex_ViewRule_pdf = '/Applications/TeXworks.app/Contents/MacOS/TeXworks'
-"let g:Tex_ViewRule_pdf = '/Applications/texstudio.app/Contents/MacOS/texstudio --pdf-viewer-only'
-"let g:Tex_ViewRule_pdf = '/usr/bin/open -a Firefox.app'
-"let g:Tex_ViewRule_pdf = '/usr/bin/open -a "Adobe Reader.app"'
-"let g:Tex_ViewRule_pdf = '/usr/bin/open'
-
-set imdisable
-autocmd FileType tex nmap <D-y> \ll
 
 " #### Plugin : jedi-vim ####
 
@@ -162,10 +123,15 @@ let g:indent_guides_enable_on_vim_startup=1
 " let g:indent_guides_start_level=2
 " let g:indent_guides_auto_colors=0
 set ts=4, sw=4 noet
+
+
 " vimrc に記述されたプラグインでインストールされていないものがないかチェックする
 NeoBundleCheck
 call neobundle#end()
 filetype plugin indent on
+
+
+" #### Plugin : neocomplete ####
 
 "Note: This option must be set in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
 " Disable AutoComplPop.
@@ -247,7 +213,8 @@ if has('vim_starting') &&  file_name == ""
     autocmd VimEnter * execute 'NERDTree ./'
 endif
 
-"#### Plugin : Syntastic ####
+" #### Plugin : Syntastic ####
+
 let g:syntastic_mode_map = { 'mode': 'passive',     
                           \ 'active_filetypes': [],     
                           \ 'passive_filetypes': [] } 
@@ -267,3 +234,66 @@ let g:syntastic_python_checkers = ['pyflakes', 'pep8']
 autocmd BufWritePost * SyntasticCheck
 
 set whichwrap=b,s,h,l,<,>,[,]
+
+" #### clang-format ####
+
+function! s:clang_format()
+  let now_line = line(".")
+  exec ':%! clang-format -style="{PointerAlignment: Left}"'
+  exec ":" . now_line
+endfunction
+
+if executable('clang-format')
+  augroup cpp_clang_format
+    autocmd!
+    autocmd BufWrite,FileWritePre,FileAppendPre *.[ch]pp call s:clang_format()
+  augroup END
+endif
+
+" #### typeset shortcut for tex ####
+
+let tex_comple_rule='platex -synctex=1 -interaction=nonstopmode -file-line-error-style'
+let dvi_comple_rule='dvipdfmx -interaction=nonstopmode'
+let show_pdf_rule='open'
+
+func! TypeSetAndShow()
+	if &filetype!='tex'
+		echo 'this file is not tex.'
+		return
+	endif
+	let base=expand('%:r')
+	let log=system(tex_comple_rule.' '.base.'.tex')
+	if v:shell_error == 0
+		let log=system(dvi_comple_rule.' '.base.'.dvi')
+		if v:shell_error == 0
+			let log=system(show_pdf_rule.' '.base.'.pdf')
+			if v:shell_error != 0
+				echo log
+			endif
+		else
+			echo log
+		endif
+	else
+		echo log
+	endif
+endfunc
+nnoremap <C-t> :call TypeSetAndShow()<CR>
+
+
+func HideAllShallow()
+	let first_pos = getpos(".")
+	0
+	let line_buf = -1
+	let i = 0
+	while line_buf != line(".")
+		let line_buf = line(".")
+		normal ]m
+		execute "normal \<Space>zfa{"
+		normal gj
+		let i += 1
+	endwhile
+	call setpos(".", first_pos)
+	echo "Hid " . string(i - 1) . " functions."
+endfunc
+
+nnoremap f<D-F> :call HideAllShallow()<CR>
