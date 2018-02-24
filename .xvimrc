@@ -1,0 +1,16 @@
+
+set number
+
+" #### Key Bind ####
+noremap <C-h> b
+noremap <C-l> e
+noremap <C-j> 2j2j2j2j2j
+noremap <C-k> 2k2k2k2k2k
+
+
+noremap j gj
+noremap k gk
+
+noremap 0 $
+noremap 9 0
+
