@@ -1,16 +1,22 @@
-
-set number
-
-" #### Key Bind ####
-noremap <C-h> b
-noremap <C-l> e
-noremap <C-j> 2j2j2j2j2j
-noremap <C-k> 2k2k2k2k2k
-
-
-noremap j gj
-noremap k gk
+noremap <C-h> 10h
+noremap <C-l> 10l
+noremap <C-j> 10j
+noremap <C-k> 10k
 
 noremap 0 $
 noremap 9 0
 
+set ts=2
+set sw=2
+set expandtab
+
+nnoremap <C-Tab> :xccmd<Space>selectNextTab<CR>
+
+nnoremap <D-d> :xccmd<Space>jumpToDefinition<CR>
+
+nnoremap <Space>d :xccmd<Space>toggleDebuggerVisibility<CR>
+nnoremap <Space>e :xccmd<Space>toggleTokenizedEditing<CR>
+nnoremap <Space>i :xccmd<Space>jumpToPreviousIssue<CR>
+
+nnoremap <C-e> :xccmd openQuickly<CR>
+nnoremap <C-w> :ncounterpart<CR>

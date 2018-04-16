@@ -1,6 +1,5 @@
 echo "This is bash_profile. "
 
-export PATH=$PATH:/usr/local/opt/go/libexec/bin
 export PATH=$PATH:/Library/TeX/texbin
 export PATH=$PATH:/usr/local/bin
 export MANPATH=/usr/local/share/man:$MANPATH
