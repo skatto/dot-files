@@ -10,6 +10,9 @@ set ts=2
 set sw=2
 set expandtab
 
+set compatible
+set whichwrap=h,l
+
 nnoremap <C-Tab> :xccmd<Space>selectNextTab<CR>
 
 nnoremap <D-d> :xccmd<Space>jumpToDefinition<CR>

@@ -40,6 +40,7 @@ noremap <C-S-Tab> gT
 
 map <D-F> <Space>zfa{
 
+set whichwrap=b,s,h,l,<,>,[,]
 
 " #### Tab Setting ####
 set smartindent
@@ -51,9 +52,10 @@ autocmd FileType tex set expandtab | set tabstop=2 | set shiftwidth=2
 autocmd FileType html set expandtab | set tabstop=2 | set shiftwidth=2
 autocmd FileType javascript set expandtab | set tabstop=2 | set shiftwidth=2
 
+let mapleader = "\<Space>"
 
 set colorcolumn=80
-
+highlight ColorColumn guibg=Red  
 
 " #### RO setting ####
 function UpdateColorScheme()
@@ -68,7 +70,10 @@ autocmd BufRead * call UpdateColorScheme()
 
 
 " #### call python3 for jedi ####
-py3 import sys
+" Comment Out, Bacause python3.6.5 is not supported yet.
+" set pythonthreehome=/usr/local/Cellar/python/3.6.5
+" set pythonthreedll=/usr/local/Cellar/python/3.6.5/Frameworks/Python.framework/Versions/3.6/Python
+" py3 import sys
 
 " neobundle settings 
 if has('vim_starting')
@@ -103,6 +108,7 @@ NeoBundle 'Shougo/vimproc.vim', {
 \    },
 \ }
 NeoBundle 'Shougo/vimshell.vim'
+NeoBundle 'hashrocket/vim-macdown'
 NeoBundle 'itchyny/lightline.vim'
 
 " #### Plugin : vimshell ####
@@ -269,7 +275,6 @@ let g:loaded_syntastic_python_pep8_checker = 1
 "保存時にSyntasticをかける.
 autocmd BufWritePost * SyntasticCheck
 
-set whichwrap=b,s,h,l,<,>,[,]
 
 " #### clang-format ####
 
